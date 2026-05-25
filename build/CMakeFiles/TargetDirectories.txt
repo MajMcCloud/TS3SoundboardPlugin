@@ -1,0 +1,3 @@
+R:/Interne Projekte/Elgato/TS3Soundboard/TS3SoundboardPlugin/build/CMakeFiles/ts3_soundboard.dir
+R:/Interne Projekte/Elgato/TS3Soundboard/TS3SoundboardPlugin/build/CMakeFiles/edit_cache.dir
+R:/Interne Projekte/Elgato/TS3Soundboard/TS3SoundboardPlugin/build/CMakeFiles/rebuild_cache.dir

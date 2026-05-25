@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"R:/Interne Projekte/Elgato/TS3Soundboard/TS3SoundboardPlugin/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

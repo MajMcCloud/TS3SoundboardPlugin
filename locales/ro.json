@@ -1,0 +1,14 @@
+{
+    "dlg_title": "TS3 Soundboard – Setări",
+    "lbl_remote": "Distanță (Microfon):",
+    "lbl_local": "Local (Difuzor):",
+    "lbl_hint": "Offsetul pe buton se adaugă la volumul de bază.",
+    "chk_logging": "Activați jurnalizarea în consola TS3",
+    "btn_ok": "OK",
+    "btn_cancel": "Anulare",
+    "menu_settings": "TS3 Soundboard - Setări",
+    "plugin_description": "Stream Deck Soundboard – redă fișiere audio direct în fluxul microfonului.",
+    "err_no_filepath": "Nicio cale de fișier specificată",
+    "err_unknown": "Eroare necunoscută",
+    "err_incomplete_cmd": "Comandă necunoscută sau incompletă (fără filePath, fără stopAll)"
+}

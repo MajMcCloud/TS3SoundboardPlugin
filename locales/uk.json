@@ -1,0 +1,14 @@
+{
+    "dlg_title": "TS3 Soundboard – Налаштування",
+    "lbl_remote": "Віддалений (Мікрофон):",
+    "lbl_local": "Локальний (Динамік):",
+    "lbl_hint": "Зміщення на кнопку додається до базової гучності.",
+    "chk_logging": "Увімкнути журналювання в консолі TS3",
+    "btn_ok": "ОК",
+    "btn_cancel": "Скасувати",
+    "menu_settings": "TS3 Soundboard - Налаштування",
+    "plugin_description": "Stream Deck Soundboard – відтворює аудіофайли безпосередньо в потік мікрофона.",
+    "err_no_filepath": "Шлях до файлу не вказано",
+    "err_unknown": "Невідома помилка",
+    "err_incomplete_cmd": "Невідома або неповна команда (немає filePath, немає stopAll)"
+}

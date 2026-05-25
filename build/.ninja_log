@@ -1,0 +1,18 @@
+# ninja log v7
+18	2452	8011508060271117	CMakeFiles/ts3_soundboard.dir/src/plugin.cpp.obj	990268d800c4cec4
+201	2823	8011508062099876	CMakeFiles/ts3_soundboard.dir/src/config.cpp.obj	6180922077a19b54
+132	2945	8011508061417653	CMakeFiles/ts3_soundboard.dir/src/pipe_server.cpp.obj	acbb4486756b45bd
+74	3019	8011508060844908	CMakeFiles/ts3_soundboard.dir/src/audio_mixer.cpp.obj	a5a6f22b131256e1
+12	1076	8011509299354077	CMakeFiles/ts3_soundboard.dir/src/settings_dialog.cpp.obj	93aea4884424aee1
+1080	2436	8011509323110704	ts3_soundboard.dll	ea98bb13ef22a959
+1080	2436	8011509323110704	ts3_soundboard.lib	ea98bb13ef22a959
+11	1701	8011512532660283	CMakeFiles/ts3_soundboard.dir/src/plugin.cpp.obj	990268d800c4cec4
+1704	2460	8011512555988808	ts3_soundboard.dll	ea98bb13ef22a959
+1704	2460	8011512555988808	ts3_soundboard.lib	ea98bb13ef22a959
+12	2337	8011519676923320	CMakeFiles/ts3_soundboard.dir/src/plugin.cpp.obj	990268d800c4cec4
+733	2561	8011519684136047	CMakeFiles/ts3_soundboard.dir/src/pipe_server.cpp.obj	acbb4486756b45bd
+2562	4066	8011519702437352	ts3_soundboard.dll	ea98bb13ef22a959
+2562	4066	8011519702437352	ts3_soundboard.lib	ea98bb13ef22a959
+18	1102	8011524039616201	CMakeFiles/ts3_soundboard.dir/src/settings_dialog.cpp.obj	93aea4884424aee1
+1106	1660	8011524050489304	ts3_soundboard.dll	ea98bb13ef22a959
+1106	1660	8011524050489304	ts3_soundboard.lib	ea98bb13ef22a959

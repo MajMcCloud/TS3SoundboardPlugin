@@ -1,0 +1,14 @@
+{
+    "dlg_title": "TS3 Soundboard – 設定",
+    "lbl_remote": "リモート（マイク）：",
+    "lbl_local": "ローカル（スピーカー）：",
+    "lbl_hint": "ボタンごとのオフセットはベース音量に加算されます。",
+    "chk_logging": "TS3コンソールへのログ記録を有効にする",
+    "btn_ok": "OK",
+    "btn_cancel": "キャンセル",
+    "menu_settings": "TS3 Soundboard - 設定",
+    "plugin_description": "Stream Deck Soundboard – オーディオファイルをマイクストリームに直接再生します。",
+    "err_no_filepath": "ファイルパスが指定されていません",
+    "err_unknown": "不明なエラー",
+    "err_incomplete_cmd": "不明または不完全なコマンド（filePathまたはstopAllがありません）"
+}

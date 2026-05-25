@@ -1,0 +1,14 @@
+{
+    "dlg_title": "TS3 Soundboard – 設定",
+    "lbl_remote": "遠端（麥克風）：",
+    "lbl_local": "本地（揚聲器）：",
+    "lbl_hint": "每個按鈕的偏移量將疊加到基礎音量。",
+    "chk_logging": "在 TS3 主機中啟用日誌記錄",
+    "btn_ok": "確定",
+    "btn_cancel": "取消",
+    "menu_settings": "TS3 Soundboard - 設定",
+    "plugin_description": "Stream Deck Soundboard – 將音訊檔案直接播放到麥克風流中。",
+    "err_no_filepath": "未指定檔案路徑",
+    "err_unknown": "未知錯誤",
+    "err_incomplete_cmd": "未知或不完整的指令（沒有 filePath，沒有 stopAll）"
+}
