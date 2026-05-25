@@ -1,6 +1,6 @@
 # TS3SoundboardPlugin
 
-A TeamSpeak 3 client plugin written in **C++17** that acts as the audio receiver for the **TS3 Soundboard** system. It works together with the [TS3Soundboard](../TS3Soundboard) Stream Deck plugin, which sends playback commands via a named pipe. The plugin injects audio files directly into the TeamSpeak microphone stream so that other participants hear the sound, while optionally playing it back locally through the speakers as well.
+A TeamSpeak 3 client plugin written in **C++17** that acts as the audio receiver for the **TS3 Soundboard** system. It works together with the TS3Soundboard Stream Deck plugin from the Elgato Marketplace, which sends playback commands via a named pipe. The plugin injects audio files directly into the TeamSpeak microphone stream so that other participants hear the sound, while optionally playing it back locally through the speakers as well.
 
 ---
 
@@ -170,7 +170,7 @@ out/build/x64-debug/
 1. Build the plugin (see above) or obtain a release package.
 2. Copy `ts3_soundboard_win64.dll` and the `ts3_soundboard/` folder to:
    ```
-   %APPDATA%\Elgato\StreamDeck\Plugins\uk.zevedei.ts3soundboard.sdPlugin\
+   %APPDATA%\TS3Client\plugins\
    ```
 3. Restart TeamSpeak 3. The plugin appears under **Plugins → Installed**.
 
