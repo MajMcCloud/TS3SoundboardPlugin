@@ -1,0 +1,14 @@
+{
+    "dlg_title": "TS3 Soundboard – Impostazioni",
+    "lbl_remote": "Remoto (Microfono):",
+    "lbl_local": "Locale (Altoparlante):",
+    "lbl_hint": "L'offset per pulsante viene aggiunto al volume base.",
+    "chk_logging": "Abilita il logging nella console TS3",
+    "btn_ok": "OK",
+    "btn_cancel": "Annulla",
+    "menu_settings": "TS3 Soundboard - Impostazioni",
+    "plugin_description": "Stream Deck Soundboard – riproduce file audio direttamente nello stream del microfono.",
+    "err_no_filepath": "Nessun percorso file specificato",
+    "err_unknown": "Errore sconosciuto",
+    "err_incomplete_cmd": "Comando sconosciuto o incompleto (nessun filePath, nessun stopAll)"
+}
