@@ -224,7 +224,7 @@ void ts3plugin_registerPluginID(const char* id) {
     if (g_pluginID) free(g_pluginID);
     size_t sz = strlen(id) + 1;
     g_pluginID = (char*)malloc(sz);
-    strncpy(g_pluginID, id, sz);
+    strncpy_s(g_pluginID, sz, id, sz - 1);
 }
 
 void ts3plugin_freeMemory(void* data) {
@@ -324,14 +324,14 @@ void ts3plugin_initMenus(struct PluginMenuItem*** menuItems, char** menuIcon) {
     (*menuItems)[0] = (struct PluginMenuItem*)malloc(sizeof(struct PluginMenuItem));
     (*menuItems)[0]->type = PLUGIN_MENU_TYPE_GLOBAL;
     (*menuItems)[0]->id   = MENU_ID_SETTINGS;
-    strncpy((*menuItems)[0]->text, Locale::instance().t("menu_settings").c_str(), PLUGIN_MENU_BUFSZ - 1);
-    strncpy((*menuItems)[0]->icon, "menu_icon.png", PLUGIN_MENU_BUFSZ - 1);
+    strncpy_s((*menuItems)[0]->text, PLUGIN_MENU_BUFSZ, Locale::instance().t("menu_settings").c_str(), PLUGIN_MENU_BUFSZ - 1);
+    strncpy_s((*menuItems)[0]->icon, PLUGIN_MENU_BUFSZ, "menu_icon.png", PLUGIN_MENU_BUFSZ - 1);
 
     (*menuItems)[1] = nullptr; // Terminator
 
     // Plugin-Untermenü-Icon (neben dem Plugin-Namen im Plugins-Menü)
     *menuIcon = (char*)malloc(PLUGIN_MENU_BUFSZ * sizeof(char));
-    strncpy(*menuIcon, "menu_icon.png", PLUGIN_MENU_BUFSZ - 1);
+    strncpy_s(*menuIcon, PLUGIN_MENU_BUFSZ, "menu_icon.png", PLUGIN_MENU_BUFSZ - 1);
 }
 
 void ts3plugin_onMenuItemEvent(uint64 /*serverConnectionHandlerID*/,
