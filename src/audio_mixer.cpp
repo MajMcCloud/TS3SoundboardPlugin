@@ -12,7 +12,10 @@
 #include "vendor/stb_vorbis.h"
 
 #define DR_FLAC_IMPLEMENTATION
+#pragma warning(push)
+#pragma warning(disable: 4244)
 #include "vendor/dr_flac.h"
+#pragma warning(pop)
 
 // ── Singleton ─────────────────────────────────────────────────────────────────
 AudioMixer& AudioMixer::instance() {
