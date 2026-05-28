@@ -141,11 +141,49 @@ int ts3plugin_init() {
 
     // Pipe-Server starten und auf Kommandos vom Stream Deck lauschen
     PipeServer::instance().setVersion(PLUGIN_VERSION);
-    PipeServer::instance().start([](const SoundCommand& cmd, std::string& errorOut) -> bool {
+    PipeServer::instance().start([](const SoundCommand& cmd, std::string& errorOut, std::string& stateOut) -> bool {
         if (cmd.stopAll) {
             AudioMixer::instance().stopAll();
             // CT-Restore als Pending setzen – wird im TS3-Thread ausgeführt
             g_pendingRestoreCT.store(true);
+            return true;
+        }
+
+        if (cmd.type == "getMicState") {
+            if (g_activeServer == 0) { errorOut = "Not connected to TS3"; return false; }
+            int muted = 0;
+            ts3.getClientSelfVariableAsInt(g_activeServer, CLIENT_INPUT_MUTED, &muted);
+            stateOut = (muted == MUTEINPUT_MUTED) ? "muted" : "unmuted";
+            return true;
+        }
+
+        if (cmd.type == "getSpeakerState") {
+            if (g_activeServer == 0) { errorOut = "Not connected to TS3"; return false; }
+            int muted = 0;
+            ts3.getClientSelfVariableAsInt(g_activeServer, CLIENT_OUTPUT_MUTED, &muted);
+            stateOut = (muted == MUTEOUTPUT_MUTED) ? "muted" : "unmuted";
+            return true;
+        }
+
+        if (cmd.type == "toggleMic") {
+            if (g_activeServer == 0) { errorOut = "Not connected to TS3"; return false; }
+            int muted = 0;
+            ts3.getClientSelfVariableAsInt(g_activeServer, CLIENT_INPUT_MUTED, &muted);
+            muted = (muted == MUTEINPUT_MUTED) ? MUTEINPUT_NONE : MUTEINPUT_MUTED;
+            ts3.setClientSelfVariableAsInt(g_activeServer, CLIENT_INPUT_MUTED, muted);
+            ts3.flushClientSelfUpdates(g_activeServer, nullptr);
+            stateOut = (muted == MUTEINPUT_MUTED) ? "muted" : "unmuted";
+            return true;
+        }
+
+        if (cmd.type == "toggleSpeaker") {
+            if (g_activeServer == 0) { errorOut = "Not connected to TS3"; return false; }
+            int muted = 0;
+            ts3.getClientSelfVariableAsInt(g_activeServer, CLIENT_OUTPUT_MUTED, &muted);
+            muted = (muted == MUTEOUTPUT_MUTED) ? MUTEOUTPUT_NONE : MUTEOUTPUT_MUTED;
+            ts3.setClientSelfVariableAsInt(g_activeServer, CLIENT_OUTPUT_MUTED, muted);
+            ts3.flushClientSelfUpdates(g_activeServer, nullptr);
+            stateOut = (muted == MUTEOUTPUT_MUTED) ? "muted" : "unmuted";
             return true;
         }
 
