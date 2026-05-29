@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstring>
 #include <cstdint>
+#include <windows.h>
 
 #define MINIMP3_IMPLEMENTATION
 #define MINIMP3_ONLY_MP3
@@ -17,6 +18,31 @@
 #include "vendor/dr_flac.h"
 #pragma warning(pop)
 
+// ── UTF-8 → std::wstring (für Dateipfade mit Umlauten / Unicode) ──────────────
+// C# sendet Pfade als UTF-8 über die Named Pipe. Windows-Datei-APIs erwarten
+// aber entweder ANSI (CP_ACP) oder UTF-16. Daher immer über Wide-Pfad öffnen.
+static std::wstring utf8ToWide(const std::string& utf8) {
+    if (utf8.empty()) return {};
+    int len = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
+    if (len <= 0) return {};
+    std::wstring wide(len - 1, L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, wide.data(), len);
+    return wide;
+}
+
+// ── Hilfsfunktion: Datei per Wide-Pfad komplett in Speicher lesen ─────────────
+// Wird für OGG/FLAC verwendet, deren Decoder-APIs nur const char* kennen.
+static bool readFileBinary(const std::string& path, std::vector<uint8_t>& outData, std::string& errorOut) {
+    std::ifstream file(utf8ToWide(path), std::ios::binary | std::ios::ate);
+    if (!file.is_open()) { errorOut = "Datei nicht gefunden oder kann nicht geöffnet werden"; return false; }
+    auto size = static_cast<size_t>(file.tellg());
+    file.seekg(0);
+    outData.resize(size);
+    file.read(reinterpret_cast<char*>(outData.data()), size);
+    if (!file) { errorOut = "Lesefehler beim Einlesen der Datei"; return false; }
+    return true;
+}
+
 // ── Singleton ─────────────────────────────────────────────────────────────────
 AudioMixer& AudioMixer::instance() {
     static AudioMixer inst;
@@ -27,7 +53,7 @@ AudioMixer& AudioMixer::instance() {
 // Unterstützt variable Chunk-Reihenfolge und extra Chunks (z.B. LIST, INFO,
 // erweitertes fmt mit cbSize-Feld). Intern wird alles auf Mono-48kHz normiert.
 bool AudioMixer::loadWav(const std::string& path, WavBuffer& out, std::string& errorOut) {
-    std::ifstream file(path, std::ios::binary);
+    std::ifstream file(utf8ToWide(path), std::ios::binary);
     if (!file.is_open()) { errorOut = "Datei nicht gefunden oder kann nicht geöffnet werden"; return false; }
 
     // RIFF-Header
@@ -135,8 +161,8 @@ bool AudioMixer::isPlaying() {
 
 // ── MP3 laden (minimp3) ───────────────────────────────────────────────────────
 bool AudioMixer::loadMp3(const std::string& path, WavBuffer& out, std::string& errorOut) {
-    // Datei komplett in Speicher lesen
-    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    // Datei komplett in Speicher lesen (Wide-Pfad für Unicode-Dateinamen)
+    std::ifstream file(utf8ToWide(path), std::ios::binary | std::ios::ate);
     if (!file.is_open()) { errorOut = "Datei nicht gefunden oder kann nicht geöffnet werden"; return false; }
     auto fileSize = static_cast<size_t>(file.tellg());
     file.seekg(0);
@@ -213,10 +239,17 @@ bool AudioMixer::loadMp3(const std::string& path, WavBuffer& out, std::string& e
 }
 
 // ── OGG laden (stb_vorbis) ───────────────────────────────────────────────────
+// stb_vorbis_decode_filename verwendet intern fopen (ANSI) → stattdessen Datei
+// per Wide-Pfad in Speicher lesen und stb_vorbis_decode_memory verwenden.
 bool AudioMixer::loadOgg(const std::string& path, WavBuffer& out, std::string& errorOut) {
+    std::vector<uint8_t> fileData;
+    if (!readFileBinary(path, fileData, errorOut)) return false;
+
     int channels = 0, sampleRate = 0;
     short* decoded = nullptr;
-    int frames = stb_vorbis_decode_filename(path.c_str(), &channels, &sampleRate, &decoded);
+    int frames = stb_vorbis_decode_memory(
+        fileData.data(), static_cast<int>(fileData.size()),
+        &channels, &sampleRate, &decoded);
     if (frames <= 0 || decoded == nullptr) { errorOut = "OGG-Dekodierung fehlgeschlagen (Datei nicht gefunden oder ungültiges Format)"; return false; }
 
     // Auf Mono reduzieren
@@ -256,12 +289,17 @@ bool AudioMixer::loadOgg(const std::string& path, WavBuffer& out, std::string& e
 }
 
 // ── FLAC laden (dr_flac) ──────────────────────────────────────────────────────
+// drflac_open_file_and_read_pcm_frames_s16 verwendet intern fopen (ANSI) →
+// stattdessen Datei per Wide-Pfad in Speicher lesen und Memory-API verwenden.
 bool AudioMixer::loadFlac(const std::string& path, WavBuffer& out, std::string& errorOut) {
+    std::vector<uint8_t> fileData;
+    if (!readFileBinary(path, fileData, errorOut)) return false;
+
     drflac_uint64 frameCount = 0;
     drflac_uint32 channels   = 0;
     drflac_uint32 sampleRate = 0;
-    drflac_int16* decoded = drflac_open_file_and_read_pcm_frames_s16(
-        path.c_str(), &channels, &sampleRate, &frameCount, nullptr);
+    drflac_int16* decoded = drflac_open_memory_and_read_pcm_frames_s16(
+        fileData.data(), fileData.size(), &channels, &sampleRate, &frameCount, nullptr);
     if (!decoded) { errorOut = "FLAC-Dekodierung fehlgeschlagen (Datei nicht gefunden oder ungültiges Format)"; return false; }
 
     // Auf Mono reduzieren
