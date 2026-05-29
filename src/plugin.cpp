@@ -9,6 +9,7 @@
 // Download: https://www.teamspeak.com/en/downloads/#sdk
 #include <teamspeak/public_definitions.h>
 #include <teamspeak/public_errors.h>
+#include <teamspeak/public_rare_definitions.h>
 #include <ts3_functions.h>
 
 #include <atomic>
@@ -146,6 +147,25 @@ int ts3plugin_init() {
             AudioMixer::instance().stopAll();
             // CT-Restore als Pending setzen – wird im TS3-Thread ausgeführt
             g_pendingRestoreCT.store(true);
+            return true;
+        }
+
+        if (cmd.type == "getAwayState") {
+            if (g_activeServer == 0) { errorOut = "Not connected to TS3"; return false; }
+            int away = 0;
+            ts3.getClientSelfVariableAsInt(g_activeServer, CLIENT_AWAY, &away);
+            stateOut = (away == AWAY_ZZZ) ? "away" : "present";
+            return true;
+        }
+
+        if (cmd.type == "toggleAway") {
+            if (g_activeServer == 0) { errorOut = "Not connected to TS3"; return false; }
+            int away = 0;
+            ts3.getClientSelfVariableAsInt(g_activeServer, CLIENT_AWAY, &away);
+            away = (away == AWAY_ZZZ) ? AWAY_NONE : AWAY_ZZZ;
+            ts3.setClientSelfVariableAsInt(g_activeServer, CLIENT_AWAY, away);
+            ts3.flushClientSelfUpdates(g_activeServer, nullptr);
+            stateOut = (away == AWAY_ZZZ) ? "away" : "present";
             return true;
         }
 
