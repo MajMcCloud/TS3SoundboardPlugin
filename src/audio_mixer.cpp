@@ -49,7 +49,21 @@ AudioMixer& AudioMixer::instance() {
     return inst;
 }
 
-// ── WAV laden ─────────────────────────────────────────────────────────────────
+// ── Peak-Normalisierungsfaktor berechnen ──────────────────────────────────────
+// Gibt 32767 / peak zurück, sodass vol = 1.0 den Puffer ohne Clipping auf den
+// vollen 16-Bit-Bereich aussteuert. Werte > 1.0 übersteuern bewusst (Hard-Clip).
+// Stille Dateien (peak == 0) liefern 1.0 als sicheren Fallback.
+static float computePeakNorm(const WavBuffer& buf) {
+    if (buf.samples.empty()) return 1.0f;
+    short peak = 0;
+    for (short s : buf.samples) {
+        short a = s < 0 ? -s : s;
+        if (a > peak) peak = a;
+    }
+    return (peak > 0) ? (32767.0f / static_cast<float>(peak)) : 1.0f;
+}
+
+
 // Unterstützt variable Chunk-Reihenfolge und extra Chunks (z.B. LIST, INFO,
 // erweitertes fmt mit cbSize-Feld). Intern wird alles auf Mono-48kHz normiert.
 bool AudioMixer::loadWav(const std::string& path, WavBuffer& out, std::string& errorOut) {
@@ -364,8 +378,12 @@ bool AudioMixer::play(const std::string& filePath, float volumeRemote, float vol
     // Dauer berechnen: 48 kHz, Mono, 16-bit → samples / 48000 * 1000 ms
     durationMsOut = sound.buffer.samples.size() * 1000ULL / 48000ULL;
 
-    sound.volumeRemote = std::clamp(volumeRemote, 0.0f, 1.0f);
-    sound.volumeLocal  = std::clamp(volumeLocal,  0.0f, 1.0f);
+    // Peak-Normalisierungsfaktor: 100 % Lautstärke = voller 16-Bit-Bereich ohne Clipping.
+    // Werte > 1.0 übersteuern bewusst; der Hard-Clip in mixIntoInternal verhindert Overflow.
+    sound.peakNormFactor = computePeakNorm(sound.buffer);
+
+    sound.volumeRemote = std::clamp(volumeRemote, 0.0f, 4.0f);
+    sound.volumeLocal  = std::clamp(volumeLocal,  0.0f, 4.0f);
 
     std::lock_guard<std::mutex> lock(m_mutex);
     m_activeSounds.push_back(std::move(sound));
@@ -406,8 +424,8 @@ bool AudioMixer::mixIntoInternal(short* samples, int sampleCount, int channels, 
             if (readPos >= sound.buffer.samples.size())
                 break;
 
-            float vol = isPlayback ? sound.volumeLocal : sound.volumeRemote;
-            short s = static_cast<short>(sound.buffer.samples[readPos] * vol);
+            float vol = (isPlayback ? sound.volumeLocal : sound.volumeRemote) * sound.peakNormFactor;
+            short s = static_cast<short>(std::clamp(sound.buffer.samples[readPos] * vol, -32767.0f, 32767.0f));
             ++readPos;
             anyMixed = true;
 

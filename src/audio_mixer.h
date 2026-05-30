@@ -49,6 +49,7 @@ private:
         WavBuffer buffer;
         float     volumeRemote;
         float     volumeLocal;
+        float     peakNormFactor = 1.0f;  // 32767 / peak – normiert 100 % auf volle Aussteuerung
         size_t    readPosCapture  = 0;
         size_t    readPosPlayback = 0;
     };

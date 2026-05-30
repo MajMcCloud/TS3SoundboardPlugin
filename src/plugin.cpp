@@ -219,8 +219,8 @@ int ts3plugin_init() {
             // Basis-Lautstärken aus Config mit prozentualem Offset multiplizieren
             // Beispiel: Basis 40% (0.4) × (1 + (−0.1)) = 0.36 = 36%
             PluginConfig cfg = loadConfig();
-            float volRemote = std::clamp(cfg.baseVolumeRemote * (1.0f + cmd.volumeOffset), 0.0f, 1.0f);
-            float volLocal  = std::clamp(cfg.baseVolumeLocal  * (1.0f + cmd.volumeOffset), 0.0f, 1.0f);
+            float volRemote = std::clamp(cfg.baseVolumeRemote * (1.0f + cmd.volumeOffset), 0.0f, 4.0f);
+            float volLocal  = std::clamp(cfg.baseVolumeLocal  * (1.0f + cmd.volumeOffset), 0.0f, 4.0f);
 
             if (cfg.enableLogging) {
                 char logBuf[512];
