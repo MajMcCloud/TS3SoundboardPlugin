@@ -142,7 +142,7 @@ int ts3plugin_init() {
 
     // Pipe-Server starten und auf Kommandos vom Stream Deck lauschen
     PipeServer::instance().setVersion(PLUGIN_VERSION);
-    PipeServer::instance().start([](const SoundCommand& cmd, std::string& errorOut, std::string& stateOut) -> bool {
+    PipeServer::instance().start([](const SoundCommand& cmd, std::string& errorOut, std::string& stateOut, size_t& durationMsOut) -> bool {
         if (cmd.stopAll) {
             AudioMixer::instance().stopAll();
             // CT-Restore als Pending setzen – wird im TS3-Thread ausgeführt
@@ -239,7 +239,7 @@ int ts3plugin_init() {
             }
 
             bool wasPlaying = AudioMixer::instance().isPlaying();
-            bool ok = AudioMixer::instance().play(cmd.filePath, volRemote, volLocal, errorOut);
+            bool ok = AudioMixer::instance().play(cmd.filePath, volRemote, volLocal, errorOut, durationMsOut);
             if (ok && !wasPlaying) {
                 // CT-Aktivierung als Pending setzen – wird im TS3-Thread ausgeführt
                 g_pendingEnableCT.store(true);

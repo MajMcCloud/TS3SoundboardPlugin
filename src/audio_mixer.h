@@ -14,8 +14,10 @@ public:
     static AudioMixer& instance();
 
     // Startet das Abspielen einer Audio-Datei mit getrennten Lautstärken (0.0 – 1.0).
+    // durationMsOut: wird bei Erfolg mit der Sound-Dauer in Millisekunden befüllt.
     // Bei Fehler wird errorOut mit einem beschreibenden Text befüllt.
-    bool play(const std::string& filePath, float volumeRemote, float volumeLocal, std::string& errorOut);
+    bool play(const std::string& filePath, float volumeRemote, float volumeLocal,
+              std::string& errorOut, size_t& durationMsOut);
 
     // Prüft ob eine Datei geladen werden könnte, ohne sie abzuspielen.
     // Rückgabe: true = Datei wäre abspielbar, false = Fehler (errorOut befüllt).

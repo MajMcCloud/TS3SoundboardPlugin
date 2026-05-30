@@ -13,10 +13,11 @@ struct SoundCommand {
 };
 
 // Callback-Typ, der bei eingehendem Kommando aufgerufen wird.
-// errorOut: wird bei Fehler mit einem beschreibenden Text befüllt.
-// stateOut: optionaler Zusatzwert (z.B. "muted"/"unmuted"), der im Erfolgsfall als "state"-Feld zurückgesendet wird.
+// errorOut:      wird bei Fehler mit einem beschreibenden Text befüllt.
+// stateOut:      optionaler Zusatzwert (z.B. "muted"/"unmuted"), der im Erfolgsfall als "state"-Feld zurückgesendet wird.
+// durationMsOut: optionale Sound-Dauer in Millisekunden; wird als numerisches "durationMs"-Feld zurückgesendet (0 = nicht gesetzt).
 // Rückgabewert: true = Erfolg, false = Fehler (wird als Status an Client gesendet)
-using CommandCallback = std::function<bool(const SoundCommand&, std::string& errorOut, std::string& stateOut)>;
+using CommandCallback = std::function<bool(const SoundCommand&, std::string& errorOut, std::string& stateOut, size_t& durationMsOut)>;
 
 class PipeServer {
 public:

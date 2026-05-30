@@ -338,7 +338,8 @@ bool AudioMixer::loadFlac(const std::string& path, WavBuffer& out, std::string& 
     return true;
 }
 
-bool AudioMixer::play(const std::string& filePath, float volumeRemote, float volumeLocal, std::string& errorOut) {
+bool AudioMixer::play(const std::string& filePath, float volumeRemote, float volumeLocal,
+                      std::string& errorOut, size_t& durationMsOut) {
     ActiveSound sound;
 
     // Extension ermitteln (bis zu 5 Zeichen für ".flac")
@@ -359,6 +360,9 @@ bool AudioMixer::play(const std::string& filePath, float volumeRemote, float vol
     else                      loaded = loadWav (filePath, sound.buffer, errorOut);
 
     if (!loaded) return false;
+
+    // Dauer berechnen: 48 kHz, Mono, 16-bit → samples / 48000 * 1000 ms
+    durationMsOut = sound.buffer.samples.size() * 1000ULL / 48000ULL;
 
     sound.volumeRemote = std::clamp(volumeRemote, 0.0f, 1.0f);
     sound.volumeLocal  = std::clamp(volumeLocal,  0.0f, 1.0f);

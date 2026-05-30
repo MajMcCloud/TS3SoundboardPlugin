@@ -120,17 +120,22 @@ void PipeServer::serverLoop() {
                     response = "{\"status\":\"ok\",\"version\":\"" + m_version + "\"}";
                 } else {
                     std::string errorMsg;
-                    std::string stateOut;
-                    bool success = true;
-                    if (m_callback) {
-                        success = m_callback(cmd, errorMsg, stateOut);
-                    }
-                    if (success) {
-                        if (!stateOut.empty())
-                            response = "{\"status\":\"ok\",\"state\":\"" + stateOut + "\"}";
-                        else
-                            response = "{\"status\":\"ok\"}";
-                    } else {
+                        std::string stateOut;
+                        size_t durationMsOut = 0;
+                        bool success = true;
+                        if (m_callback) {
+                            success = m_callback(cmd, errorMsg, stateOut, durationMsOut);
+                        }
+                        if (success) {
+                            if (!stateOut.empty() && durationMsOut > 0)
+                                response = "{\"status\":\"ok\",\"state\":\"" + stateOut + "\",\"durationMs\":" + std::to_string(durationMsOut) + "}";
+                            else if (!stateOut.empty())
+                                response = "{\"status\":\"ok\",\"state\":\"" + stateOut + "\"}";
+                            else if (durationMsOut > 0)
+                                response = "{\"status\":\"ok\",\"durationMs\":" + std::to_string(durationMsOut) + "}";
+                            else
+                                response = "{\"status\":\"ok\"}";
+                        } else {
                         // Fehlertext JSON-sicher escapen (Backslash und Anführungszeichen)
                         std::string safe;
                         safe.reserve(errorMsg.size());
